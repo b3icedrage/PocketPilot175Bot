@@ -25,3 +25,8 @@ test("Cloudflare config binds the existing D1 database", () => {
   assert.match(wrangler, /binding = "DB"/);
   assert.match(wrangler, /a27da7f3-c328-4266-a3c7-1ee9d2ac7cf0/);
 });
+
+
+test("paper scans do not enforce a daily loss cap", () => {
+  assert.doesNotMatch(source, /MAX_DAILY_LOSS_PCT|Daily paper loss limit reached/);
+});
