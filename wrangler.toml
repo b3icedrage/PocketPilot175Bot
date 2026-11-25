@@ -9,5 +9,7 @@ database_name = "pocketpilot175bot-db"
 database_id = "a27da7f3-c328-4266-a3c7-1ee9d2ac7cf0"
 migrations_dir = "migrations"
 
-# No cron trigger is configured intentionally. The /scan command is manual;
-# adding a cron would enable scheduled paper scans and should be a deliberate change.
+[triggers]
+# Scan M1 markets every minute, 24/7. Notifications are sent only for newly opened
+# paper signals; no broker orders are ever submitted.
+crons = ["* * * * *"]
