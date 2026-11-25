@@ -35,9 +35,9 @@ test("paper scans do not enforce a daily loss cap", () => {
 test("worker sends newly opened signals to the owner and labels them simulated", () => {
   assert.match(source, /POCKETPILOT AI SIGNAL/);
   assert.match(source, /Expiry: 1 minute \\(simulated\\)/);
-  assert.match(source, /env\\.OWNER_TELEGRAM_ID/);
+  assert.match(source, /env\.OWNER_TELEGRAM_ID/);
 });
 
 test("worker is scheduled for one-minute scans", () => {
-  assert.match(wrangler, /crons = \["\\* \\* \\* \\* \\*"\]/);
+  assert.match(wrangler, /crons = \["\* \* \* \* \*"\]/);
 });
