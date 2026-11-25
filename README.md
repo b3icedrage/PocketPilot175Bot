@@ -8,7 +8,9 @@ Cloudflare Worker + D1 backend for the private Telegram paper-trading analytics 
 - Health endpoint: `GET /health`
 - Owner-only Telegram command handling.
 - Paper/demo mode only. `/mode real` remains locked; no live broker orders are placed.
-- M1 signal scan uses EMA 9/21 + RSI 14 from the configured Biquote data endpoint.
+- Automatic M1 scans run every minute, 24/7, using EMA 9/21 + RSI 14 from the configured Biquote data endpoint.
+- Newly opened paper signals are pushed to the owner in Telegram with pair, BUY/SELL direction, M1 timeframe, one-minute simulated expiry, entry reference, RSI and confirmation details.
+- Scheduled notifications are signal alerts only; all positions remain simulated and no broker order is submitted.
 - Supported symbols in the deployed source: EURUSD, XAUUSD, GBPJPY, AUDUSD, USDJPY, GBPUSD.
 - AUD/CAD OTC is deliberately pending until a genuine OTC quote source is verified.
 - D1 stores paper positions, paper trade history, signal state and the owner UID format record.
@@ -68,7 +70,7 @@ Never commit `.dev.vars`, `.env`, or any real credential.
 - GitHub Actions deploys only after a push to `main` or a manual workflow dispatch.
 - A failed test prevents deployment.
 - The workflow requires both GitHub secrets above.
-- No scheduled scan trigger is configured. Scans remain manual with `/scan`; enabling automatic scans should be an intentional follow-up.
+- Cloudflare Cron Triggers schedule scans every minute. `/scan` remains available for manual scans; `/pause` disables new scans and `/resume` re-enables them.
 - Existing D1 data is not reset by deployment.
 
 ## Safety
