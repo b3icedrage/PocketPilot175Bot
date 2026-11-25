@@ -2,7 +2,6 @@ const SYMBOLS = ["EURUSD","XAUUSD","GBPJPY","AUDUSD","USDJPY","GBPUSD"];
 const PENDING_SYMBOLS = [{symbol:"AUD/CAD OTC",code:"AUDCAD_OTC",status:"PENDING_FEED_VERIFICATION",reason:"No verified OTC quote source configured"}];
 const DATA_SOURCE = "biquote.io";
 const PAYOUT = 0.80;
-const MAX_DAILY_LOSS_PCT = 5;
 
 async function send(env, chatId, text) {
   if (!env.TELEGRAM_BOT_TOKEN || !chatId) return;
@@ -100,12 +99,6 @@ async function scan(env, chatId=null) {
       const existing=await env.DB.prepare("SELECT symbol FROM paper_positions WHERE symbol=?").bind(symbol).first();
       if (existing) continue;
       const riskState=await state(env);
-      const daily=await env.DB.prepare("SELECT COALESCE(SUM(CASE WHEN pnl<0 THEN -pnl ELSE 0 END),0) AS losses FROM paper_trades WHERE date(created_at)=date('now')").first();
-      const dailyLimit=Number(riskState.balance)*MAX_DAILY_LOSS_PCT/100;
-      if (Number(daily.losses)>=dailyLimit) {
-        notes.push("Daily paper loss limit reached; new positions blocked");
-        break;
-      }
       const amount=Math.max(0.01,Number(riskState.balance)*Number(riskState.risk_percent)/100);
       const result=await env.DB.prepare("INSERT OR IGNORE INTO paper_positions(symbol,direction,entry_price,amount,entry_bar_time,created_at) VALUES(?,?,?,?,?,CURRENT_TIMESTAMP)")
         .bind(symbol,direction,current,amount,latest.openTime).run();
