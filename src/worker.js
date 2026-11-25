@@ -106,6 +106,7 @@ async function scan(env, chatId=null) {
         opened++;
         await env.DB.prepare("UPDATE signal_state SET last_signal=? WHERE symbol=?").bind(direction,symbol).run();
         notes.push(symbol+" "+direction+" opened @ "+current.toFixed(5)+" | RSI "+momentum.toFixed(1)+" | EMA9/21 trend");
+        await send(env,env.OWNER_TELEGRAM_ID,"🧠 POCKETPILOT AI SIGNAL\\n\\nPair: "+symbol+"\\nDirection: "+direction+"\\nTimeframe: M1\\nExpiry: 1 minute (simulated)\\nEntry reference: "+current.toFixed(5)+"\\nRSI(14): "+momentum.toFixed(1)+"\\nConfirmation: EMA 9/21 trend + price position\\nFeed: "+DATA_SOURCE+" (independent market feed)\\n\\n⚠️ Signal only. No live trade was placed.");
       }
     } catch(e) {
       errors++;
@@ -143,7 +144,7 @@ async function handleMessage(env,msg) {
   const parts=(msg.text||"").trim().split(/\s+/);
   const command=(parts[0]||"").toLowerCase();
   if (command==="/start" || command==="/help") {
-    await send(env,chatId,"PocketPilot175Bot is online.\n/status — account status\n/scan — scan six M1 markets now\n/signals — latest paper positions\n/mode demo — paper trading\n/mode real — locked\n/pause — pause automatic scans\n/resume — resume paper scans\n/stats — results\n/history — last 10 closed trades\n/audit — database consistency\n/uid 12345678 — link your Pocket Option UID (format-only)\n/myuid — view linked UID\n/paperwin — manual simulated win\n/paperloss — manual simulated loss\nNo live orders are placed."); return;
+    await send(env,chatId,"PocketPilot175Bot is online.\n/status — account status\n/scan — scan six M1 markets now\n/signals — latest paper positions\n/mode demo — paper trading\n/mode real — locked\n/pause — pause automatic scans\n/resume — resume automatic 24/7 paper scans\n/stats — results\n/history — last 10 closed trades\n/audit — database consistency\n/uid 12345678 — link your Pocket Option UID (format-only)\n/myuid — view linked UID\n/paperwin — manual simulated win\n/paperloss — manual simulated loss\nNo live orders are placed."); return;
   }
   if (command==="/uid" || command==="/myuid") {
     if (command==="/myuid" || !parts[1]) {
@@ -208,7 +209,7 @@ async function handleMessage(env,msg) {
   }
   if (command==="/resume") {
     await env.DB.prepare("UPDATE bot_state SET mode='demo',paused=0 WHERE id=1").run();
-    await send(env,chatId,"Paper mode resumed. Automatic schedule is disabled; use /scan for a manual paper scan."); return;
+    await send(env,chatId,"Paper mode resumed. Automatic M1 scans run every minute, 24/7. Signals are notifications only; all positions remain simulated."); return;
   }
   if (command==="/scan") { await scan(env,chatId); return; }
   if (command==="/signals") {
