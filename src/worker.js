@@ -106,7 +106,7 @@ async function scan(env, chatId=null) {
         opened++;
         await env.DB.prepare("UPDATE signal_state SET last_signal=? WHERE symbol=?").bind(direction,symbol).run();
         notes.push(symbol+" "+direction+" opened @ "+current.toFixed(5)+" | RSI "+momentum.toFixed(1)+" | EMA9/21 trend");
-        await send(env,env.OWNER_TELEGRAM_ID,"🧠 POCKETPILOT AI SIGNAL\\n\\nPair: "+symbol+"\\nDirection: "+direction+"\\nTimeframe: M1\\nExpiry: 1 minute (simulated)\\nEntry reference: "+current.toFixed(5)+"\\nRSI(14): "+momentum.toFixed(1)+"\\nConfirmation: EMA 9/21 trend + price position\\nFeed: "+DATA_SOURCE+" (independent market feed)\\n\\n⚠️ Signal only. No live trade was placed.");
+        await send(env,env.OWNER_TELEGRAM_ID,"🧠 POCKETPILOT AI SIGNAL\n\nPair: "+symbol+"\nDirection: "+direction+"\nTimeframe: M1\nExpiry: 1 minute (simulated)\nEntry reference: "+current.toFixed(5)+"\nRSI(14): "+momentum.toFixed(1)+"\nConfirmation: EMA 9/21 trend + price position\nFeed: "+DATA_SOURCE+" (independent market feed)\n\n⚠️ Signal only. No live trade was placed.");
       }
     } catch(e) {
       errors++;
