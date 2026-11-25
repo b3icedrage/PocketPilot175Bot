@@ -30,3 +30,14 @@ test("Cloudflare config binds the existing D1 database", () => {
 test("paper scans do not enforce a daily loss cap", () => {
   assert.doesNotMatch(source, /MAX_DAILY_LOSS_PCT|Daily paper loss limit reached/);
 });
+
+
+test("worker sends newly opened signals to the owner and labels them simulated", () => {
+  assert.match(source, /POCKETPILOT AI SIGNAL/);
+  assert.match(source, /Expiry: 1 minute \\(simulated\\)/);
+  assert.match(source, /env\\.OWNER_TELEGRAM_ID/);
+});
+
+test("worker is scheduled for one-minute scans", () => {
+  assert.match(wrangler, /crons = \["\\* \\* \\* \\* \\*"\]/);
+});
